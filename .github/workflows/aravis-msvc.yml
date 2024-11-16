@@ -2,22 +2,22 @@ name: Aravis-MSVC
 
 on:
   push:
-    branches: [ main, aravis-0-8 ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, aravis-0-8 ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
   msvc:
-    runs-on: windows-2019
+    runs-on: windows-2022
     strategy:
       fail-fast: false
       matrix:
         include:
-        - version: 16
+        - version: 17
           arch: x86_64
-          build_type_conan: Release
-          build_type_meson: release
+          build_type_conan: Debug
+          build_type_meson: debug
     steps:
     - name: pip
       run: |
@@ -39,17 +39,14 @@ jobs:
           libxml2/2.10.3
           zlib/1.2.13
           libusb/1.0.26
-
           [build_requires]
           meson/0.59.2
           pkgconf/1.9.3
-
           [generators]
           pkg_config
           virtualenv
           virtualbuildenv
           virtualrunenv
-
           [options]
           glib:shared=True
           gstreamer:shared=True
@@ -79,7 +76,6 @@ jobs:
         meson test -C .\build
     - name: logs
       uses: actions/upload-artifact@v3
-      if: failure()
       with:
-        name: msvc_${{ matrix.version }}_${{ matrix.arch }}_${{ matrix.build_type_meson }}_Meson_Testlog
-        path: build/meson-logs/testlog.txt
+        name: install
+        path: ${{ github.workspace }}\install

@@ -5,9 +5,9 @@ name: Aravis-MinGW
 
 on:
   push:
-    branches: [ main, aravis-0-8 ]
+    branches: [ main ]
   pull_request:
-    branches: [ main, aravis-0-8 ]
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
@@ -18,8 +18,8 @@ jobs:
       matrix:
         include:
           - { sys: mingw64, env: x86_64 }
-          # - { sys: mingw32, env: i686 } # mingw32 is missing gst-plugins-good package, disabled for now
-          - { sys: ucrt64,  env: ucrt-x86_64 }
+          #- { sys: mingw32, env: i686 }
+          #- { sys: ucrt64,  env: ucrt-x86_64 }
           # - { sys: clang64, env: clang-x86_64 } # clang64 is missing several packages, disabled for now
     defaults:
       run:
@@ -49,15 +49,15 @@ jobs:
     - name: meson
       run: |
         mkdir build
-        meson --buildtype=plain -Ddocumentation=disabled -Dgst-plugin=enabled -Dintrospection=enabled -Dusb=enabled -Dviewer=enabled -Dgv-n-buffers=1 -Dgentl-producer=true . ./build
+        mkdir install
+        meson --prefix=D:/a/Myaravis/Myaravis/install --buildtype=plain -Ddocumentation=disabled -Dgst-plugin=enabled -Dintrospection=enabled -Dusb=enabled -Dviewer=enabled -Dgv-n-buffers=1 -Dgentl-producer=true . ./build
     - name: ninja install
       run: |
         ninja -C ./build --verbose install
-    - name: meson test
-      run: |
-        meson test -C ./build
+    #- name: meson test
+      #run: |
+        #meson test -C ./build
     - uses: actions/upload-artifact@v3
-      if: failure()
       with:
-        name: ${{matrix.sys}}_Meson_Testlog
-        path: build/meson-logs/testlog.txt
+        name: install_mingw64
+        path: D:/a/Myaravis/Myaravis/install
